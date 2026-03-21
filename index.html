@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MyRadio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=IBM+Plex+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      :root {
+        --bg: #0d0d0f;
+        --surface: #16161a;
+        --border: #2a2a32;
+        --amber: #e8a838;
+        --amber-dim: #9a6e1f;
+        --text: #e8e4da;
+        --muted: #6b6870;
+        --playing: #e8a838;
+        --blue: #4a9eff;
+        --blue-dim: #1e4a80;
+        --player-h: 80px;
+      }
+
+      html,
+      body {
+        height: 100%;
+        background: var(--bg);
+        color: var(--text);
+        font-family: 'DM Sans', sans-serif;
+        font-weight: 300;
+      }
+
+      /* ── NOISE OVERLAY ── */
+      body::before {
+        content: '';
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+        pointer-events: none;
+      }
+
+      /* ── HEADER ── */
+      header {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        padding: 20px 32px 16px;
+        display: flex;
+        align-items: baseline;
+        gap: 20px;
+      }
+      header h1 {
+        font-family: 'DM Serif Display', serif;
+        font-size: clamp(1.6rem, 4vw, 2.4rem);
+        letter-spacing: -0.02em;
+        color: var(--amber);
+      }
+      header .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--muted);
+        display: inline-block;
+        margin-bottom: 2px;
+        transition: background 0.3s, box-shadow 0.3s;
+      }
+      header .dot.live {
+        background: #e84040;
+        box-shadow: 0 0 8px #e84040aa;
+        animation: pulse 1.4s ease-in-out infinite;
+      }
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.4;
+        }
+      }
+
+      /* ── FILTER TABS ── */
+      .filters {
+        padding: 16px 32px 0;
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .filter-btn {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.72rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        padding: 5px 14px;
+        border-radius: 20px;
+        border: 1px solid var(--border);
+        background: transparent;
+        color: var(--muted);
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .filter-btn:hover {
+        color: var(--text);
+        border-color: var(--muted);
+      }
+      .filter-btn.active {
+        background: var(--amber);
+        color: #0d0d0f;
+        border-color: var(--amber);
+        font-weight: 500;
+      }
+
+      /* ── GRID ── */
+      main {
+        padding: 24px 32px calc(var(--player-h) + 24px);
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 12px;
+        position: relative;
+        z-index: 1;
+      }
+
+      /* ── STATION CARD ── */
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 20px;
+        cursor: pointer;
+        transition: border-color 0.2s, transform 0.15s, box-shadow 0.2s;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        user-select: none;
+        position: relative;
+        overflow: hidden;
+      }
+      .card::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(
+          circle at 70% 30%,
+          var(--amber) 0%,
+          transparent 65%
+        );
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+      .card:hover {
+        transform: translateY(-2px);
+        border-color: var(--amber-dim);
+        box-shadow: 0 8px 24px #0009;
+      }
+      .card:hover::after {
+        opacity: 0.04;
+      }
+      .card.playing {
+        border-color: var(--amber);
+        box-shadow: 0 0 0 1px var(--amber-dim), 0 8px 32px #e8a83822;
+      }
+      .card.playing::after {
+        opacity: 0.07;
+      }
+      .card.external .card-name {
+        color: var(--blue);
+      }
+      .card.external .play-icon {
+        border-color: var(--blue-dim);
+      }
+      .card.external:hover .play-icon {
+        border-color: var(--blue);
+      }
+      .card.external .play-icon svg {
+        fill: var(--blue);
+      }
+      .card.external:hover {
+        border-color: var(--blue-dim);
+      }
+      .card.external.hover::after {
+        opacity: 0.04;
+      }
+
+      .card-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+      }
+      .card-name {
+        font-family: 'DM Serif Display', serif;
+        font-size: 1.1rem;
+        line-height: 1.2;
+        color: var(--text);
+      }
+      .card.playing .card-name {
+        color: var(--amber);
+      }
+
+      .play-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        border: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        transition: background 0.2s, border-color 0.2s;
+      }
+      .card:hover .play-icon {
+        border-color: var(--amber);
+      }
+      .card.playing .play-icon {
+        background: var(--amber);
+        border-color: var(--amber);
+      }
+      .play-icon svg {
+        width: 12px;
+        height: 12px;
+        fill: var(--muted);
+      }
+      .card:hover .play-icon svg {
+        fill: var(--amber);
+      }
+      .card.playing .play-icon svg {
+        fill: #0d0d0f;
+      }
+
+      .card-tag {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.65rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+      .card-desc {
+        font-size: 0.82rem;
+        color: var(--muted);
+        line-height: 1.5;
+      }
+
+      /* EQ bars (animated when playing) */
+      .eq {
+        display: flex;
+        align-items: flex-end;
+        gap: 2px;
+        height: 14px;
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+      .card.playing .eq {
+        opacity: 1;
+      }
+      .eq span {
+        display: block;
+        width: 3px;
+        background: var(--amber);
+        border-radius: 1px;
+        animation: eq 0.8s ease-in-out infinite alternate;
+      }
+      .eq span:nth-child(1) {
+        animation-duration: 0.6s;
+        animation-delay: 0s;
+      }
+      .eq span:nth-child(2) {
+        animation-duration: 0.8s;
+        animation-delay: 0.15s;
+      }
+      .eq span:nth-child(3) {
+        animation-duration: 0.5s;
+        animation-delay: 0.05s;
+      }
+      .eq span:nth-child(4) {
+        animation-duration: 0.9s;
+        animation-delay: 0.2s;
+      }
+      .eq span:nth-child(5) {
+        animation-duration: 0.7s;
+        animation-delay: 0.1s;
+      }
+      @keyframes eq {
+        from {
+          height: 3px;
+        }
+        to {
+          height: 14px;
+        }
+      }
+
+      /* ── BOTTOM PLAYER ── */
+      #player-bar {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 20;
+        height: var(--player-h);
+        background: #111115ee;
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-top: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        padding: 0 24px;
+        gap: 20px;
+        transform: translateY(100%);
+        transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      #player-bar.visible {
+        transform: translateY(0);
+      }
+
+      #player-name {
+        font-family: 'DM Serif Display', serif;
+        font-size: 1rem;
+        color: var(--amber);
+        flex: 1;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      #player-tag {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.65rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+
+      .ctrl-btn {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        color: var(--text);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.2s, border-color 0.2s;
+        flex-shrink: 0;
+      }
+      .ctrl-btn:hover {
+        border-color: var(--amber);
+      }
+      .ctrl-btn svg {
+        width: 16px;
+        height: 16px;
+        fill: var(--text);
+      }
+      #stop-btn {
+        background: var(--amber);
+        border-color: var(--amber);
+      }
+      #stop-btn svg {
+        fill: #0d0d0f;
+      }
+
+      /* volume */
+      .vol-wrap {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .vol-wrap svg {
+        width: 14px;
+        height: 14px;
+        fill: var(--muted);
+        flex-shrink: 0;
+      }
+      #vol-slider {
+        -webkit-appearance: none;
+        width: 80px;
+        height: 3px;
+        background: var(--border);
+        border-radius: 2px;
+        outline: none;
+        cursor: pointer;
+      }
+      #vol-slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--amber);
+      }
+
+      /* ── CATEGORY SECTION HEADINGS ── */
+      .section-label {
+        grid-column: 1 / -1;
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.7rem;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--muted);
+        padding-top: 8px;
+        border-top: 1px solid var(--border);
+        margin-top: 4px;
+      }
+      .section-label:first-child {
+        border-top: none;
+        margin-top: 0;
+      }
+
+      /* ── EMPTY STATE ── */
+      .empty {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 60px 0;
+        color: var(--muted);
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.8rem;
+        letter-spacing: 0.06em;
+      }
+
+      @media (max-width: 600px) {
+        header {
+          padding: 16px 20px 14px;
+        }
+        .filters {
+          padding: 12px 20px 0;
+        }
+        main {
+          padding: 16px 20px calc(var(--player-h) + 16px);
+          gap: 10px;
+        }
+        #player-bar {
+          padding: 0 16px;
+          gap: 12px;
+        }
+        .vol-wrap {
+          display: none;
+        }
+        #vol-slider {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>MyRadio</h1>
+      <span class="dot" id="live-dot"></span>
+    </header>
+
+    <div class="filters" id="filters"></div>
+    <main id="grid"></main>
+
+    <div id="player-bar">
+      <div>
+        <div id="player-name">—</div>
+        <div id="player-tag">—</div>
+      </div>
+      <div style="flex: 1"></div>
+      <div class="vol-wrap">
+        <svg viewBox="0 0 24 24">
+          <path
+            d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0 0 14 7.97v8.05c1.48-.73 2.5-2.25 2.5-4.02z"
+          />
+        </svg>
+        <input
+          type="range"
+          id="vol-slider"
+          min="0"
+          max="1"
+          step="0.02"
+          value="0.8"
+        />
+      </div>
+      <button class="ctrl-btn" id="stop-btn" title="Stop">
+        <svg viewBox="0 0 24 24">
+          <rect x="6" y="6" width="12" height="12" rx="1" />
+        </svg>
+      </button>
+    </div>
+
+    <audio id="audio" preload="none"></audio>
+
+    <script>
+      // ============================================================
+      //  ★ STATIONS CONFIG — ここを編集してラジオを管理 ★
+      //  各ステーションのフィールド:
+      //    name     : 表示名
+      //    url      : ストリームURL (mp3 / aac / m3u8)
+      //    category : カテゴリー名（自由に決めてOK）
+      //    desc     : 短い説明文（省略可）
+      //    website  : 公式サイトURL（直接再生不可の局に使用。ブルーボタンで別タブ表示）
+      // ============================================================
+      const STATIONS = [
+        {
+          name: 'BBC World Service',
+          url: 'https://stream.live.vc.bbcmedia.co.uk/bbc_world_service',
+          category: 'News',
+          desc: 'BBC英語国際放送',
+        },
+        {
+          name: 'NPR News',
+          url: 'https://npr-ice.streamguys1.com/live.mp3',
+          category: 'News',
+          desc: '米国公共ラジオ。時事・文化・科学を深掘りする良質なニュース',
+        },
+        {
+          name: 'Radio Swiss Jazz',
+          url: 'http://stream.srg-ssr.ch/m/rsj/mp3_128',
+          category: 'Jazz',
+          desc: 'スイス公共放送のジャズ専門チャンネル',
+        },
+        {
+          name: 'Soma FM Groove Salad',
+          url: 'https://ice6.somafm.com/groovesalad-256-mp3',
+          category: 'Ambient',
+          desc: 'Slow ambient grooves — 作業BGMに最適',
+        },
+        {
+          name: 'Soma FM Space Station',
+          url: 'https://ice6.somafm.com/spacestation-128-mp3',
+          category: 'Ambient',
+          desc: 'Deep space ambient electronics',
+        },
+        {
+          name: '181.fm Classic Rock',
+          url: 'https://listen.181fm.com/181-classical_128k.mp3',
+          category: 'Classic Rock',
+          desc: 'クラシックロック定番局',
+        },
+        {
+          name: 'lofi.cafe',
+          url: 'https://lofi.stream.laut.fm/lofi',
+          category: 'Lo-fi',
+          desc: 'Lo-fi hip hop — study & chill',
+        },
+        {
+          name: 'FIP',
+          url: 'https://icecast.radiofrance.fr/fip-midfi.mp3',
+          category: 'Eclectic',
+          desc: 'フランス公共放送のエクレクティック局',
+        },
+        {
+          name: 'NHK らじるらじる',
+          website: 'https://www.nhk.or.jp/radio/',
+          category: 'News',
+          desc: 'NHK公式ラジオ配信サービス',
+        },
+        {
+          name: 'DZRH News',
+          website: 'https://dzrh.com.ph',
+          category: 'News',
+          desc: 'マニラ666AM。フィリピン老舗ニュース局',
+        },
+      ];
+      // ============================================================
+
+      const audio = document.getElementById('audio');
+      const grid = document.getElementById('grid');
+      const filters = document.getElementById('filters');
+      const bar = document.getElementById('player-bar');
+      const pName = document.getElementById('player-name');
+      const pTag = document.getElementById('player-tag');
+      const liveDot = document.getElementById('live-dot');
+      const volSlider = document.getElementById('vol-slider');
+      const stopBtn = document.getElementById('stop-btn');
+
+      let current = null;
+      let activeFilter = 'All';
+
+      audio.volume = parseFloat(volSlider.value);
+      volSlider.addEventListener(
+        'input',
+        () => (audio.volume = parseFloat(volSlider.value))
+      );
+
+      // gather categories
+      const cats = ['All', ...new Set(STATIONS.map((s) => s.category))];
+
+      function buildFilters() {
+        filters.innerHTML = '';
+        cats.forEach((cat) => {
+          const btn = document.createElement('button');
+          btn.className =
+            'filter-btn' + (cat === activeFilter ? ' active' : '');
+          btn.textContent = cat;
+          btn.onclick = () => {
+            activeFilter = cat;
+            buildFilters();
+            buildGrid();
+          };
+          filters.appendChild(btn);
+        });
+      }
+
+      function buildGrid() {
+        grid.innerHTML = '';
+        const visible =
+          activeFilter === 'All'
+            ? STATIONS
+            : STATIONS.filter((s) => s.category === activeFilter);
+
+        if (!visible.length) {
+          grid.innerHTML =
+            '<div class="empty">no stations in this category</div>';
+          return;
+        }
+
+        // Group by category
+        const groups = {};
+        visible.forEach((s) => {
+          if (!groups[s.category]) groups[s.category] = [];
+          groups[s.category].push(s);
+        });
+
+        Object.entries(groups).forEach(([cat, stations]) => {
+          if (activeFilter === 'All') {
+            const label = document.createElement('div');
+            label.className = 'section-label';
+            label.textContent = cat;
+            grid.appendChild(label);
+          }
+          stations.forEach((s) => grid.appendChild(makeCard(s)));
+        });
+      }
+
+      function makeCard(station) {
+        const isExternal = !!station.website;
+        const card = document.createElement('div');
+        card.className =
+          'card' +
+          (current === station ? ' playing' : '') +
+          (isExternal ? ' external' : '');
+        const iconPath = isExternal
+          ? 'M19 19H5V5h7V3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z'
+          : current === station
+          ? 'M6 19h4V5H6v14zm8-14v14h4V5h-4z'
+          : 'M8 5v14l11-7z';
+        card.innerHTML = `
+    <div class="card-top">
+      <div class="card-name">${station.name}</div>
+      <div class="play-icon">
+        <svg viewBox="0 0 24 24"><path d="${iconPath}"/></svg>
+      </div>
+    </div>
+    <div class="card-tag">${station.category}</div>
+    ${station.desc ? `<div class="card-desc">${station.desc}</div>` : ''}
+    <div class="eq">
+      <span></span><span></span><span></span><span></span><span></span>
+    </div>
+  `;
+        card.addEventListener('click', () => play(station));
+        return card;
+      }
+
+      function play(station) {
+        if (station.website) {
+          window.open(station.website, '_blank');
+          return;
+        }
+        if (current === station) {
+          stop();
+          return;
+        }
+        current = station;
+        audio.src = station.url;
+        audio.play().catch(() => {});
+
+        pName.textContent = station.name;
+        pTag.textContent = station.category;
+        bar.classList.add('visible');
+        liveDot.classList.add('live');
+        buildGrid();
+      }
+
+      function stop() {
+        audio.pause();
+        audio.src = '';
+        current = null;
+        bar.classList.remove('visible');
+        liveDot.classList.remove('live');
+        buildGrid();
+      }
+
+      stopBtn.addEventListener('click', stop);
+
+      buildFilters();
+      buildGrid();
+    </script>
+  </body>
+</html>
