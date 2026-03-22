@@ -10,13 +10,7 @@
       rel="stylesheet"
     />
     <style>
-      *,
-      *::before,
-      *::after {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-      }
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
       :root {
         --bg: #0d0d0f;
@@ -26,7 +20,6 @@
         --amber-dim: #9a6e1f;
         --text: #e8e4da;
         --muted: #6b6870;
-        --playing: #e8a838;
         --blue: #4a9eff;
         --blue-dim: #1e4a80;
         --player-h: 80px;
@@ -50,15 +43,11 @@
       }
 
       header {
-        position: sticky;
-        top: 0;
-        z-index: 10;
+        position: sticky; top: 0; z-index: 10;
         background: var(--bg);
         border-bottom: 1px solid var(--border);
         padding: 20px 32px 16px;
-        display: flex;
-        align-items: baseline;
-        gap: 20px;
+        display: flex; align-items: baseline; gap: 20px;
       }
       header h1 {
         font-family: 'DM Serif Display', serif;
@@ -67,12 +56,8 @@
         color: var(--amber);
       }
       header .dot {
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        background: var(--muted);
-        display: inline-block;
-        margin-bottom: 2px;
+        width: 8px; height: 8px; border-radius: 50%;
+        background: var(--muted); display: inline-block; margin-bottom: 2px;
         transition: background 0.3s, box-shadow 0.3s;
       }
       header .dot.live {
@@ -80,92 +65,45 @@
         box-shadow: 0 0 8px #e84040aa;
         animation: pulse 1.4s ease-in-out infinite;
       }
-      @keyframes pulse {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0.4; }
-      }
+      @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
 
       #jst-clock {
         font-family: 'IBM Plex Mono', monospace;
-        font-size: 1.0rem;
-        letter-spacing: 0.08em;
-        color: #ffffff;
+        font-size: 1.0rem; letter-spacing: 0.08em; color: #ffffff;
       }
-      #jst-clock .sec {
-        opacity: 0.4;
-      }
+      #jst-clock .sec { opacity: 0.4; }
 
-      .filters {
-        padding: 16px 32px 0;
-        display: flex;
-        gap: 8px;
-        flex-wrap: wrap;
-      }
+      .filters { padding: 16px 32px 0; display: flex; gap: 8px; flex-wrap: wrap; }
       .filter-btn {
         font-family: 'IBM Plex Mono', monospace;
-        font-size: 0.72rem;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        padding: 5px 14px;
-        border-radius: 20px;
-        border: 1px solid var(--border);
-        background: transparent;
-        color: var(--muted);
-        cursor: pointer;
-        transition: all 0.2s;
+        font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase;
+        padding: 5px 14px; border-radius: 20px; border: 1px solid var(--border);
+        background: transparent; color: var(--muted); cursor: pointer; transition: all 0.2s;
       }
-      .filter-btn:hover {
-        color: var(--text);
-        border-color: var(--muted);
-      }
-      .filter-btn.active {
-        background: var(--amber);
-        color: #0d0d0f;
-        border-color: var(--amber);
-        font-weight: 500;
-      }
+      .filter-btn:hover { color: var(--text); border-color: var(--muted); }
+      .filter-btn.active { background: var(--amber); color: #0d0d0f; border-color: var(--amber); font-weight: 500; }
 
       main {
         padding: 24px 32px calc(var(--player-h) + 24px);
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-        gap: 12px;
-        position: relative;
-        z-index: 1;
+        display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 12px; position: relative; z-index: 1;
       }
 
       .card {
-        background: var(--surface);
-        border: 1px solid var(--border);
-        border-radius: 12px;
-        padding: 20px;
-        cursor: pointer;
+        background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+        padding: 20px; cursor: pointer;
         transition: border-color 0.2s, transform 0.15s, box-shadow 0.2s;
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        user-select: none;
-        position: relative;
-        overflow: hidden;
+        display: flex; flex-direction: column; gap: 10px;
+        user-select: none; position: relative; overflow: hidden;
       }
       .card::after {
-        content: '';
-        position: absolute;
-        inset: 0;
+        content: ''; position: absolute; inset: 0;
         background: radial-gradient(circle at 70% 30%, var(--amber) 0%, transparent 65%);
-        opacity: 0;
-        transition: opacity 0.3s;
+        opacity: 0; transition: opacity 0.3s;
       }
-      .card:hover {
-        transform: translateY(-2px);
-        border-color: var(--amber-dim);
-        box-shadow: 0 8px 24px #0009;
-      }
+      .card:hover { transform: translateY(-2px); border-color: var(--amber-dim); box-shadow: 0 8px 24px #0009; }
       .card:hover::after { opacity: 0.04; }
-      .card.playing {
-        border-color: var(--amber);
-        box-shadow: 0 0 0 1px var(--amber-dim), 0 8px 32px #e8a83822;
-      }
+      .card.playing { border-color: var(--amber); box-shadow: 0 0 0 1px var(--amber-dim), 0 8px 32px #e8a83822; }
       .card.playing::after { opacity: 0.07; }
       .card.external .card-name { color: var(--blue); }
       .card.external .play-icon { border-color: var(--blue-dim); }
@@ -173,28 +111,13 @@
       .card.external .play-icon svg { fill: var(--blue); }
       .card.external:hover { border-color: var(--blue-dim); }
 
-      .card-top {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-      }
-      .card-name {
-        font-family: 'DM Serif Display', serif;
-        font-size: 1.1rem;
-        line-height: 1.2;
-        color: var(--text);
-      }
+      .card-top { display: flex; justify-content: space-between; align-items: flex-start; }
+      .card-name { font-family: 'DM Serif Display', serif; font-size: 1.1rem; line-height: 1.2; color: var(--text); }
       .card.playing .card-name { color: var(--amber); }
 
       .play-icon {
-        width: 32px;
-        height: 32px;
-        border-radius: 50%;
-        border: 1px solid var(--border);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
+        width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--border);
+        display: flex; align-items: center; justify-content: center; flex-shrink: 0;
         transition: background 0.2s, border-color 0.2s;
       }
       .card:hover .play-icon { border-color: var(--amber); }
@@ -203,162 +126,73 @@
       .card:hover .play-icon svg { fill: var(--amber); }
       .card.playing .play-icon svg { fill: #0d0d0f; }
 
-      .card-tag {
-        font-family: 'IBM Plex Mono', monospace;
-        font-size: 0.65rem;
-        letter-spacing: 0.1em;
-        text-transform: uppercase;
-        color: var(--muted);
-      }
-      .card-desc {
-        font-size: 0.82rem;
-        color: var(--muted);
-        line-height: 1.5;
-      }
+      .card-tag { font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+      .card-desc { font-size: 0.82rem; color: var(--muted); line-height: 1.5; }
 
       .card-time {
-        font-family: 'IBM Plex Mono', monospace;
-        font-size: 0.7rem;
-        letter-spacing: 0.06em;
-        color: var(--muted);
-        display: flex;
-        align-items: center;
-        gap: 5px;
-        border-top: 1px solid var(--border);
-        padding-top: 8px;
-        margin-top: 2px;
+        font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem; letter-spacing: 0.06em;
+        color: var(--muted); display: flex; align-items: center; gap: 5px;
+        border-top: 1px solid var(--border); padding-top: 8px; margin-top: 2px;
       }
-      .card-time .time-clock {
-        color: var(--text);
-        font-weight: 500;
-      }
+      .card-time .time-clock { color: var(--text); font-weight: 500; }
 
-      .eq {
-        display: flex;
-        align-items: flex-end;
-        gap: 2px;
-        height: 14px;
-        opacity: 0;
-        transition: opacity 0.3s;
-      }
+      .eq { display: flex; align-items: flex-end; gap: 2px; height: 14px; opacity: 0; transition: opacity 0.3s; }
       .card.playing .eq { opacity: 1; }
-      .eq span {
-        display: block;
-        width: 3px;
-        background: var(--amber);
-        border-radius: 1px;
-        animation: eq 0.8s ease-in-out infinite alternate;
-      }
+      .eq span { display: block; width: 3px; background: var(--amber); border-radius: 1px; animation: eq 0.8s ease-in-out infinite alternate; }
       .eq span:nth-child(1) { animation-duration: 0.6s; animation-delay: 0s; }
       .eq span:nth-child(2) { animation-duration: 0.8s; animation-delay: 0.15s; }
       .eq span:nth-child(3) { animation-duration: 0.5s; animation-delay: 0.05s; }
       .eq span:nth-child(4) { animation-duration: 0.9s; animation-delay: 0.2s; }
       .eq span:nth-child(5) { animation-duration: 0.7s; animation-delay: 0.1s; }
-      @keyframes eq {
-        from { height: 3px; }
-        to { height: 14px; }
-      }
+      @keyframes eq { from{height:3px} to{height:14px} }
 
       #player-bar {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        z-index: 20;
-        height: var(--player-h);
-        background: #111115ee;
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
+        position: fixed; bottom: 0; left: 0; right: 0; z-index: 20;
+        height: var(--player-h); background: #111115ee;
+        backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
         border-top: 1px solid var(--border);
-        display: flex;
-        align-items: center;
-        padding: 0 24px;
-        gap: 20px;
-        transform: translateY(100%);
-        transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        display: flex; align-items: center; padding: 0 24px; gap: 20px;
+        transform: translateY(100%); transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
       }
       #player-bar.visible { transform: translateY(0); }
 
       #player-name {
-        font-family: 'DM Serif Display', serif;
-        font-size: 1rem;
-        color: var(--amber);
-        flex: 1;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+        font-family: 'DM Serif Display', serif; font-size: 1rem; color: var(--amber);
+        flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
       }
-      #player-tag {
-        font-family: 'IBM Plex Mono', monospace;
-        font-size: 0.65rem;
-        letter-spacing: 0.1em;
-        text-transform: uppercase;
-        color: var(--muted);
-      }
+      #player-tag { font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
 
       .ctrl-btn {
-        width: 44px;
-        height: 44px;
-        border-radius: 50%;
-        background: var(--surface);
-        border: 1px solid var(--border);
-        color: var(--text);
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: background 0.2s, border-color 0.2s;
-        flex-shrink: 0;
+        width: 44px; height: 44px; border-radius: 50%;
+        background: var(--surface); border: 1px solid var(--border); color: var(--text);
+        cursor: pointer; display: flex; align-items: center; justify-content: center;
+        transition: background 0.2s, border-color 0.2s; flex-shrink: 0;
       }
       .ctrl-btn:hover { border-color: var(--amber); }
       .ctrl-btn svg { width: 16px; height: 16px; fill: var(--text); }
       #stop-btn { background: var(--amber); border-color: var(--amber); }
       #stop-btn svg { fill: #0d0d0f; }
 
-      .vol-wrap {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
+      .vol-wrap { display: flex; align-items: center; gap: 8px; }
       .vol-wrap svg { width: 14px; height: 14px; fill: var(--muted); flex-shrink: 0; }
       #vol-slider {
-        -webkit-appearance: none;
-        width: 80px;
-        height: 3px;
-        background: var(--border);
-        border-radius: 2px;
-        outline: none;
-        cursor: pointer;
+        -webkit-appearance: none; width: 80px; height: 3px;
+        background: var(--border); border-radius: 2px; outline: none; cursor: pointer;
       }
       #vol-slider::-webkit-slider-thumb {
-        -webkit-appearance: none;
-        width: 14px;
-        height: 14px;
-        border-radius: 50%;
-        background: var(--amber);
+        -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%; background: var(--amber);
       }
 
       .section-label {
-        grid-column: 1 / -1;
-        font-family: 'IBM Plex Mono', monospace;
-        font-size: 0.7rem;
-        letter-spacing: 0.14em;
-        text-transform: uppercase;
-        color: var(--muted);
-        padding-top: 8px;
-        border-top: 1px solid var(--border);
-        margin-top: 4px;
+        grid-column: 1 / -1; font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted);
+        padding-top: 8px; border-top: 1px solid var(--border); margin-top: 4px;
       }
       .section-label:first-child { border-top: none; margin-top: 0; }
 
       .empty {
-        grid-column: 1 / -1;
-        text-align: center;
-        padding: 60px 0;
-        color: var(--muted);
-        font-family: 'IBM Plex Mono', monospace;
-        font-size: 0.8rem;
-        letter-spacing: 0.06em;
+        grid-column: 1 / -1; text-align: center; padding: 60px 0;
+        color: var(--muted); font-family: 'IBM Plex Mono', monospace; font-size: 0.8rem; letter-spacing: 0.06em;
       }
 
       @media (max-width: 600px) {
@@ -386,22 +220,20 @@
         <div id="player-name">—</div>
         <div id="player-tag">—</div>
       </div>
-      <div style="flex: 1"></div>
+      <div style="flex:1"></div>
       <div class="vol-wrap">
         <svg viewBox="0 0 24 24">
-          <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0 0 14 7.97v8.05c1.48-.73 2.5-2.25 2.5-4.02z" />
+          <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0 0 14 7.97v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/>
         </svg>
         <input type="range" id="vol-slider" min="0" max="4" step="0.05" value="1.0" />
         <span id="vol-label" style="font-family:'IBM Plex Mono',monospace;font-size:0.65rem;color:var(--muted);min-width:2.8em">1.00</span>
       </div>
       <button class="ctrl-btn" id="stop-btn" title="Stop">
-        <svg viewBox="0 0 24 24">
-          <rect x="6" y="6" width="12" height="12" rx="1" />
-        </svg>
+        <svg viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="1"/></svg>
       </button>
     </div>
 
-    <audio id="audio" preload="none"></audio>
+    <audio id="audio" preload="none" crossorigin="anonymous"></audio>
 
     <script>
       const audio     = document.getElementById('audio');
@@ -419,29 +251,36 @@
       let current = null;
       let activeFilter = 'All';
 
-      // ── WEB AUDIO API (GainNode) ──
-      // AudioContextとGainNodeを使い、volume値が1.0を超えた増幅に対応する
+      // ── WEB AUDIO API ──
+      // createMediaElementSource は1つのaudio要素につき1回だけ呼ぶ
       let audioCtx = null;
       let gainNode = null;
-      let sourceNode = null;
+      let audioInitialized = false;
 
       function initAudioContext() {
-        if (audioCtx) return;
+        if (audioInitialized) return;
+        audioInitialized = true;
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const source = audioCtx.createMediaElementSource(audio);
         gainNode = audioCtx.createGain();
+        source.connect(gainNode);
         gainNode.connect(audioCtx.destination);
-        sourceNode = audioCtx.createMediaElementSource(audio);
-        sourceNode.connect(gainNode);
       }
 
-      function setGain(value) {
-        // 0〜1.0 はそのまま、1.0超はGainNodeで増幅
-        if (value <= 1.0) {
-          audio.volume = value;
-          if (gainNode) gainNode.gain.value = 1.0;
+      function applyVolume(v) {
+        if (!audioCtx) {
+          // GainNode未初期化の場合はaudio.volumeのみ（上限1.0）
+          audio.volume = Math.min(v, 1.0);
+          return;
+        }
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        // 1.0以下はaudio.volumeで、1.0超はGainNodeで増幅
+        if (v <= 1.0) {
+          audio.volume = v;
+          gainNode.gain.value = 1.0;
         } else {
           audio.volume = 1.0;
-          if (gainNode) gainNode.gain.value = value;
+          gainNode.gain.value = v;
         }
       }
 
@@ -449,21 +288,17 @@
       volSlider.addEventListener('input', () => {
         const v = parseFloat(volSlider.value);
         volLabel.textContent = v.toFixed(2);
-        if (audioCtx) setGain(v);
+        applyVolume(v);
       });
 
       // ── JST CLOCK ──
       function updateJST() {
         const now = new Date();
         const hm = new Intl.DateTimeFormat('ja-JP', {
-          timeZone: 'Asia/Tokyo',
-          hour: '2-digit',
-          minute: '2-digit',
-          hour12: false,
+          timeZone: 'Asia/Tokyo', hour: '2-digit', minute: '2-digit', hour12: false,
         }).format(now);
         const ss = String(now.getSeconds()).padStart(2, '0');
-        document.getElementById('jst-clock').innerHTML =
-          `${hm}<span class="sec">:${ss}</span>`;
+        document.getElementById('jst-clock').innerHTML = `${hm}<span class="sec">:${ss}</span>`;
       }
       updateJST();
       setInterval(updateJST, 1000);
@@ -472,10 +307,7 @@
       function getLocalTime(timezone) {
         try {
           return new Intl.DateTimeFormat('ja-JP', {
-            timeZone: timezone,
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: false,
+            timeZone: timezone, hour: '2-digit', minute: '2-digit', hour12: false,
           }).format(new Date());
         } catch { return '--:--'; }
       }
@@ -494,21 +326,16 @@
           const btn = document.createElement('button');
           btn.className = 'filter-btn' + (cat === activeFilter ? ' active' : '');
           btn.textContent = cat;
-          btn.onclick = () => {
-            activeFilter = cat;
-            buildFilters();
-            buildGrid();
-          };
+          btn.onclick = () => { activeFilter = cat; buildFilters(); buildGrid(); };
           filters.appendChild(btn);
         });
       }
 
       function buildGrid() {
         grid.innerHTML = '';
-        const visible =
-          activeFilter === 'All'
-            ? STATIONS
-            : STATIONS.filter((s) => s.category === activeFilter);
+        const visible = activeFilter === 'All'
+          ? STATIONS
+          : STATIONS.filter((s) => s.category === activeFilter);
 
         if (!visible.length) {
           grid.innerHTML = '<div class="empty">no stations in this category</div>';
@@ -535,15 +362,10 @@
       function makeCard(station) {
         const isExternal = !!station.website;
         const card = document.createElement('div');
-        card.className =
-          'card' +
-          (current === station ? ' playing' : '') +
-          (isExternal ? ' external' : '');
+        card.className = 'card' + (current === station ? ' playing' : '') + (isExternal ? ' external' : '');
         const iconPath = isExternal
           ? 'M19 19H5V5h7V3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z'
-          : current === station
-          ? 'M6 19h4V5H6v14zm8-14v14h4V5h-4z'
-          : 'M8 5v14l11-7z';
+          : current === station ? 'M6 19h4V5H6v14zm8-14v14h4V5h-4z' : 'M8 5v14l11-7z';
 
         const timeHtml = station.timezone ? `
           <div class="card-time">
@@ -582,9 +404,8 @@
           return;
         }
 
-        // AudioContextはユーザー操作後に初期化（ブラウザ制約）
+        // 初回再生時にAudioContextを初期化（ユーザー操作後でないと動かないブラウザ制約）
         initAudioContext();
-        if (audioCtx.state === 'suspended') audioCtx.resume();
 
         current = station;
         audio.src = station.url;
@@ -592,9 +413,9 @@
         const v = station.volume ?? 1.0;
         volSlider.value = v;
         volLabel.textContent = v.toFixed(2);
-        setGain(v);
+        applyVolume(v);
 
-        audio.play().catch(() => {});
+        audio.play().catch((e) => console.warn('play error:', e));
         pName.textContent = station.name;
         pTag.textContent = station.category;
         bar.classList.add('visible');
@@ -613,7 +434,6 @@
 
       stopBtn.addEventListener('click', stop);
 
-      // stations.json を読み込んで起動
       fetch('./stations.json')
         .then(r => {
           if (!r.ok) throw new Error(`HTTP ${r.status}`);
