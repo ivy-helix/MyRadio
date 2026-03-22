@@ -12,7 +12,6 @@
     <style>
       *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-      /* ── DARK MODE (default) ── */
       :root {
         --bg: #0d0d0f;
         --surface: #16161a;
@@ -27,7 +26,6 @@
         --header-clock-color: #ffffff;
       }
 
-      /* ── LIGHT MODE ── */
       :root.light {
         --bg: #f5f0e8;
         --surface: #ede8e0;
@@ -57,7 +55,6 @@
         pointer-events: none;
       }
 
-      /* ── HEADER ── */
       header {
         position: sticky; top: 0; z-index: 10;
         background: var(--bg);
@@ -65,8 +62,6 @@
         padding: 20px 32px 16px;
         display: flex; align-items: center; gap: 20px;
         transition: padding 0.3s, background 0.3s, border-color 0.3s;
-        top: 0;
-        position: sticky;
       }
       header.compact { padding: 10px 32px; }
 
@@ -93,7 +88,6 @@
       }
       @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
 
-      /* ── HEADER RIGHT ── */
       .header-right {
         margin-left: auto;
         display: flex; align-items: center; gap: 14px;
@@ -108,7 +102,6 @@
       header.compact #jst-clock { font-size: 0.8rem; }
       #jst-clock .sec { opacity: 0.4; }
 
-      /* ── THEME TOGGLE ── */
       #theme-btn {
         background: none; border: none; cursor: pointer;
         width: 28px; height: 28px;
@@ -120,7 +113,6 @@
       #theme-btn:hover { color: var(--amber); }
       #theme-btn svg { width: 18px; height: 18px; }
 
-      /* ── FILTERS ── */
       .filters { padding: 16px 32px 0; display: flex; gap: 8px; flex-wrap: wrap; }
       .filter-btn {
         font-family: 'IBM Plex Mono', monospace;
@@ -132,14 +124,12 @@
       .filter-btn:hover { color: var(--text); border-color: var(--muted); }
       .filter-btn.active { background: var(--amber); color: var(--bg); border-color: var(--amber); font-weight: 500; }
 
-      /* ── GRID ── */
       main {
         padding: 24px 32px calc(var(--player-h) + 24px);
         display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
         gap: 12px; position: relative; z-index: 1;
       }
 
-      /* ── CARD ── */
       .card {
         background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
         padding: 20px; cursor: pointer;
@@ -222,12 +212,27 @@
         transition: background 0.2s, border-color 0.2s; flex-shrink: 0;
       }
       .ctrl-btn:hover { border-color: var(--amber); }
-      .ctrl-btn svg { width: 16px; height: 16px; fill: var(--text); }
+      .ctrl-btn svg { width: 16px; height: 16px; fill: none; stroke: var(--text); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
       #stop-btn { background: var(--amber); border-color: var(--amber); }
-      #stop-btn svg { fill: var(--bg); }
+      #stop-btn svg { stroke: var(--bg); }
+      #stop-btn-icon { fill: var(--bg); stroke: none; }
+
+      /* タイマーボタン作動中 */
+      #timer-btn.active { border-color: var(--amber); }
+      #timer-btn.active svg { stroke: var(--amber); }
+
+      /* タイマー残り時間表示 */
+      #timer-remaining {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.65rem; letter-spacing: 0.06em;
+        color: var(--amber);
+        display: none;
+        white-space: nowrap;
+      }
+      #timer-remaining.visible { display: block; }
 
       .vol-wrap { display: flex; align-items: center; gap: 8px; }
-      .vol-wrap svg { width: 14px; height: 14px; fill: var(--muted); flex-shrink: 0; }
+      .vol-wrap svg { width: 14px; height: 14px; fill: var(--muted); flex-shrink: 0; stroke: none; }
       #vol-slider {
         -webkit-appearance: none; width: 80px; height: 3px;
         background: var(--border); border-radius: 2px; outline: none; cursor: pointer;
@@ -248,13 +253,65 @@
         color: var(--muted); font-family: 'IBM Plex Mono', monospace; font-size: 0.8rem; letter-spacing: 0.06em;
       }
 
+      /* ── SLEEP TIMER POPUP ── */
+      #timer-overlay {
+        position: fixed; inset: 0; z-index: 100;
+        background: #0008;
+        display: flex; align-items: flex-end; justify-content: center;
+        opacity: 0; pointer-events: none;
+        transition: opacity 0.25s;
+      }
+      #timer-overlay.visible { opacity: 1; pointer-events: all; }
+
+      #timer-popup {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 20px 20px 0 0;
+        padding: 28px 24px 40px;
+        width: 100%; max-width: 480px;
+        transform: translateY(100%);
+        transition: transform 0.3s cubic-bezier(0.4,0,0.2,1), background 0.3s, border-color 0.3s;
+      }
+      #timer-overlay.visible #timer-popup { transform: translateY(0); }
+
+      #timer-popup h2 {
+        font-family: 'DM Serif Display', serif;
+        font-size: 1.2rem; color: var(--text);
+        margin-bottom: 20px; text-align: center;
+      }
+
+      .timer-options {
+        display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;
+        margin-bottom: 16px;
+      }
+      .timer-opt {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.85rem; font-weight: 500;
+        padding: 14px 0; border-radius: 10px;
+        border: 1px solid var(--border); background: var(--bg);
+        color: var(--text); cursor: pointer;
+        transition: all 0.2s; text-align: center;
+      }
+      .timer-opt:hover { border-color: var(--amber); color: var(--amber); }
+
+      #timer-cancel {
+        width: 100%; padding: 12px;
+        font-family: 'IBM Plex Mono', monospace; font-size: 0.75rem;
+        letter-spacing: 0.08em; text-transform: uppercase;
+        background: transparent; border: 1px solid var(--border);
+        border-radius: 10px; color: var(--muted); cursor: pointer;
+        transition: all 0.2s;
+      }
+      #timer-cancel:hover { border-color: var(--muted); color: var(--text); }
+
       @media (max-width: 600px) {
         header { padding: 16px 20px 14px; }
         header.compact { padding: 8px 20px; }
         .filters { padding: 12px 20px 0; }
         main { padding: 16px 20px calc(var(--player-h) + 16px); gap: 10px; }
-        #player-bar { padding: 0 16px; gap: 12px; }
+        #player-bar { padding: 0 16px; gap: 10px; }
         .vol-wrap { display: none; }
+        .timer-options { grid-template-columns: repeat(2, 1fr); }
       }
     </style>
   </head>
@@ -264,11 +321,9 @@
       <span class="dot" id="live-dot"></span>
       <div class="header-right">
         <button id="theme-btn" title="テーマ切替" aria-label="テーマ切替">
-          <!-- 月アイコン（ダークモード時に表示） -->
           <svg id="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
             <path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/>
           </svg>
-          <!-- 太陽アイコン（ライトモード時に表示） -->
           <svg id="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:none">
             <circle cx="12" cy="12" r="5"/>
             <line x1="12" y1="1" x2="12" y2="3"/>
@@ -288,44 +343,143 @@
     <div class="filters" id="filters"></div>
     <main id="grid"></main>
 
+    <!-- PLAYER BAR -->
     <div id="player-bar">
       <div>
         <div id="player-name">—</div>
         <div id="player-tag">—</div>
       </div>
       <div style="flex:1"></div>
+      <span id="timer-remaining"></span>
       <div class="vol-wrap">
-        <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0 0 14 7.97v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0 0 14 7.97v8.05c1.48-.73 2.5-2.25 2.5-4.02z" fill="var(--muted)"/></svg>
         <input type="range" id="vol-slider" min="0" max="4" step="0.05" value="1.0" />
         <span id="vol-label" style="font-family:'IBM Plex Mono',monospace;font-size:0.65rem;color:var(--muted);min-width:2.8em">1.00</span>
       </div>
-      <button class="ctrl-btn" id="stop-btn" title="Stop">
-        <svg viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="1"/></svg>
+      <!-- タイマーボタン -->
+      <button class="ctrl-btn" id="timer-btn" title="おやすみタイマー">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="9"/>
+          <polyline points="12 7 12 12 15 15"/>
+        </svg>
       </button>
+      <!-- ストップボタン -->
+      <button class="ctrl-btn" id="stop-btn" title="Stop">
+        <svg viewBox="0 0 24 24"><rect id="stop-btn-icon" x="6" y="6" width="12" height="12" rx="1"/></svg>
+      </button>
+    </div>
+
+    <!-- SLEEP TIMER OVERLAY -->
+    <div id="timer-overlay">
+      <div id="timer-popup">
+        <h2>おやすみタイマー</h2>
+        <div class="timer-options">
+          <button class="timer-opt" data-min="15">15 min</button>
+          <button class="timer-opt" data-min="30">30 min</button>
+          <button class="timer-opt" data-min="60">60 min</button>
+          <button class="timer-opt" data-min="90">90 min</button>
+        </div>
+        <button id="timer-cancel">キャンセル</button>
+      </div>
     </div>
 
     <audio id="audio" preload="none" crossorigin="anonymous"></audio>
 
     <script>
-      const audio     = document.getElementById('audio');
-      const grid      = document.getElementById('grid');
-      const filters   = document.getElementById('filters');
-      const bar       = document.getElementById('player-bar');
-      const pName     = document.getElementById('player-name');
-      const pTag      = document.getElementById('player-tag');
-      const liveDot   = document.getElementById('live-dot');
-      const volSlider = document.getElementById('vol-slider');
-      const volLabel  = document.getElementById('vol-label');
-      const stopBtn   = document.getElementById('stop-btn');
-      const siteHeader= document.getElementById('site-header');
-      const themeBtn  = document.getElementById('theme-btn');
-      const iconMoon  = document.getElementById('icon-moon');
-      const iconSun   = document.getElementById('icon-sun');
+      const audio         = document.getElementById('audio');
+      const grid          = document.getElementById('grid');
+      const filters       = document.getElementById('filters');
+      const bar           = document.getElementById('player-bar');
+      const pName         = document.getElementById('player-name');
+      const pTag          = document.getElementById('player-tag');
+      const liveDot       = document.getElementById('live-dot');
+      const volSlider     = document.getElementById('vol-slider');
+      const volLabel      = document.getElementById('vol-label');
+      const stopBtn       = document.getElementById('stop-btn');
+      const siteHeader    = document.getElementById('site-header');
+      const themeBtn      = document.getElementById('theme-btn');
+      const iconMoon      = document.getElementById('icon-moon');
+      const iconSun       = document.getElementById('icon-sun');
+      const timerBtn      = document.getElementById('timer-btn');
+      const timerOverlay  = document.getElementById('timer-overlay');
+      const timerCancel   = document.getElementById('timer-cancel');
+      const timerRemaining= document.getElementById('timer-remaining');
 
       let STATIONS = [];
       let current = null;
       let activeFilter = 'All';
       let isLight = false;
+
+      // ── SLEEP TIMER ──
+      let sleepTimer = null;
+      let sleepInterval = null;
+      let sleepRemaining = 0; // 残り秒数
+
+      function startSleepTimer(minutes) {
+        clearSleepTimer();
+        sleepRemaining = minutes * 60;
+        updateTimerDisplay();
+        timerBtn.classList.add('active');
+        timerRemaining.classList.add('visible');
+
+        sleepInterval = setInterval(() => {
+          sleepRemaining--;
+          updateTimerDisplay();
+          if (sleepRemaining <= 0) {
+            clearSleepTimer();
+            stop();
+          }
+        }, 1000);
+
+        closeTimerPopup();
+      }
+
+      function clearSleepTimer() {
+        clearTimeout(sleepTimer);
+        clearInterval(sleepInterval);
+        sleepTimer = null;
+        sleepInterval = null;
+        sleepRemaining = 0;
+        timerBtn.classList.remove('active');
+        timerRemaining.classList.remove('visible');
+        timerRemaining.textContent = '';
+      }
+
+      function updateTimerDisplay() {
+        const min = Math.ceil(sleepRemaining / 60);
+        timerRemaining.textContent = `${min} min`;
+      }
+
+      function openTimerPopup() {
+        timerOverlay.classList.add('visible');
+      }
+
+      function closeTimerPopup() {
+        timerOverlay.classList.remove('visible');
+      }
+
+      // タイマーボタン：作動中なら即キャンセル、未作動ならポップアップ
+      timerBtn.addEventListener('click', () => {
+        if (sleepInterval) {
+          clearSleepTimer();
+        } else {
+          openTimerPopup();
+        }
+      });
+
+      // オーバーレイ背景クリックで閉じる
+      timerOverlay.addEventListener('click', (e) => {
+        if (e.target === timerOverlay) closeTimerPopup();
+      });
+
+      timerCancel.addEventListener('click', closeTimerPopup);
+
+      // 時間選択ボタン
+      document.querySelectorAll('.timer-opt').forEach(btn => {
+        btn.addEventListener('click', () => {
+          startSleepTimer(parseInt(btn.dataset.min));
+        });
+      });
 
       // ── THEME TOGGLE ──
       themeBtn.addEventListener('click', () => {
@@ -350,7 +504,7 @@
         }
       }, { passive: true });
 
-      // ── WEB AUDIO API (GainNode) ──
+      // ── WEB AUDIO API ──
       let audioCtx = null;
       let gainNode = null;
       let audioInitialized = false;
@@ -366,18 +520,10 @@
       }
 
       function applyVolume(v) {
-        if (!audioCtx) {
-          audio.volume = Math.min(v, 1.0);
-          return;
-        }
+        if (!audioCtx) { audio.volume = Math.min(v, 1.0); return; }
         if (audioCtx.state === 'suspended') audioCtx.resume();
-        if (v <= 1.0) {
-          audio.volume = v;
-          gainNode.gain.value = 1.0;
-        } else {
-          audio.volume = 1.0;
-          gainNode.gain.value = v;
-        }
+        if (v <= 1.0) { audio.volume = v; gainNode.gain.value = 1.0; }
+        else { audio.volume = 1.0; gainNode.gain.value = v; }
       }
 
       volSlider.addEventListener('input', () => {
@@ -398,7 +544,7 @@
       updateJST();
       setInterval(updateJST, 1000);
 
-      // ── LOCAL TIME (カード用) ──
+      // ── LOCAL TIME ──
       function getLocalTime(timezone) {
         try {
           return new Intl.DateTimeFormat('ja-JP', {
@@ -492,22 +638,15 @@
 
       // ── PLAY ──
       function play(station) {
-        if (station.website) {
-          window.open(station.website, '_blank');
-          return;
-        }
+        if (station.website) { window.open(station.website, '_blank'); return; }
         if (current === station) { stop(); return; }
-
         initAudioContext();
-
         current = station;
         audio.src = station.url;
-
         const v = station.volume ?? 1.0;
         volSlider.value = v;
         volLabel.textContent = v.toFixed(2);
         applyVolume(v);
-
         audio.play().catch((e) => console.warn('play error:', e));
         pName.textContent = station.name;
         pTag.textContent = station.category;
@@ -523,6 +662,7 @@
         current = null;
         bar.classList.remove('visible');
         liveDot.classList.remove('live');
+        clearSleepTimer();
         buildGrid();
       }
 
