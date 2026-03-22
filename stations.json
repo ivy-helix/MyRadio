@@ -1,98 +1,152 @@
 [
-    {
-      "name": "BBC World Service",
-      "url": "https://stream.live.vc.bbcmedia.co.uk/bbc_world_service",
-      "category": "News",
-      "desc": "BBC英語国際放送",
-      "timezone": "Europe/London"
-    },
-    {
-      "name": "NPR News",
-      "url": "https://npr-ice.streamguys1.com/live.mp3",
-      "category": "News",
-      "desc": "米国公共ラジオ。時事・文化・科学を深掘りする良質なニュース",
-      "timezone": "America/New_York"
-    },
-    {
-      "name": "Radio Swiss Jazz",
-      "url": "http://stream.srg-ssr.ch/m/rsj/mp3_128",
-      "category": "Jazz",
-      "desc": "スイス公共放送のジャズ専門チャンネル"
-    },
-    {
-      "name": "Soma FM Groove Salad",
-      "url": "https://ice6.somafm.com/groovesalad-256-mp3",
-      "category": "Ambient",
-      "desc": "Slow ambient grooves — 作業BGMに最適"
-    },
-    {
-      "name": "Soma FM Space Station",
-      "url": "https://ice6.somafm.com/spacestation-128-mp3",
-      "category": "Ambient",
-      "desc": "Deep space ambient electronics"
-    },
-    {
-      "name": "181.fm Classic Rock",
-      "url": "https://listen.181fm.com/181-classical_128k.mp3",
-      "category": "Classic Rock",
-      "desc": "クラシックロック定番局"
-    },
-    {
-      "name": "lofi.cafe",
-      "url": "https://lofi.stream.laut.fm/lofi",
-      "category": "Lo-fi",
-      "desc": "Lo-fi hip hop — study & chill"
-    },
-    {
-      "name": "FIP",
-      "url": "https://icecast.radiofrance.fr/fip-midfi.mp3",
-      "category": "Eclectic",
-      "desc": "フランス公共放送のエクレクティック局"
-    },
-    {
-      "name": "NHK らじるらじる",
-      "website": "https://www.nhk.or.jp/radio/",
-      "category": "News",
-      "desc": "NHK公式ラジオ配信サービス",
-      "timezone": "Asia/Tokyo"
-    },
-    {
-      "name": "DZRH News",
-      "url": "https://dzrh-azura.mmg.com.ph/listen/dzrh_manila/radio.mp3",
-      "category": "News",
-      "desc": "マニラ666AM。フィリピン老舗ニュース局",
-      "timezone": "Asia/Manila"
-    },
-    {
-      "name": "Sky News Australia Radio",
-      "url": "https://playerservices.streamtheworld.com/api/livestream-redirect/NOVA_SKYNEWSAAC.aac",
-      "category": "News",
-      "desc": "オーストラリアの24時間ニュース専門局",
-      "timezone": "Australia/Sydney"
-    },
-    {
-      "name": "80s 90s Super Pop Hits",
-      "url": "https://s4.myradiostream.com:7344/listen.mp3?",
-      "category": "Pop",
-      "desc": ""
-    },
-    {
-      "name": "Japan City Pop",
-      "url": "https://play.streamafrica.net/japancitypop",
-      "category": "City Pop",
-      "desc": "日本のシティポップ"
-    },
-    {
-      "name": "J1 HITS",
-      "url": "https://jenny.torontocast.com:2000/stream/J1HITS?_=184325",
-      "category": "Hottest Hits",
-      "desc": "Hottest Hits"
-    },
-    {
-      "name": "FM世田谷",
-      "url": "https://fmsetagaya834.out.airtime.pro/fmsetagaya834_a",
-      "category": "News",
-      "desc": "1998年7月から放送を開始した地域密着型ラジオ",
-      "timezone": "Asia/Tokyo"
-    }
-  ]
+  {
+    "name": "BBC World Service",
+    "category": "News",
+    "url": "https://stream.live.vc.bbcmedia.co.uk/bbc_world_service",
+    "desc": "英国発・世界最大級の国際放送。多言語で届ける信頼のグローバルニュース",
+    "timezone": "Europe/London",
+    "volume": 0.8
+  },
+  {
+    "name": "NPR News",
+    "category": "News",
+    "url": "https://npr-ice.streamguys1.com/live.mp3",
+    "desc": "米国公共ラジオ。時事・文化・科学を深掘りする良質なニュース",
+    "timezone": "America/New_York",
+    "volume": 0.8
+  },
+  {
+    "name": "Sky News Australia Radio",
+    "category": "News",
+    "url": "https://playerservices.streamtheworld.com/api/livestream-redirect/NOVA_SKYNEWSAAC.aac",
+    "desc": "オーストラリア発のニュース・時事論評局。保守系コメンタリーと24時間ニュースをデジタル配信",
+    "timezone": "Australia/Sydney",
+    "volume": 0.8
+  },
+  {
+    "name": "DZRH News",
+    "category": "News",
+    "url": "https://dzrh-azura.mmg.com.ph/listen/dzrh_manila/radio.mp3",
+    "desc": "フィリピン最古のラジオ局。マニラ発の最前線ニュースと社会情報",
+    "timezone": "Asia/Manila",
+    "volume": 0.8
+  },
+  {
+    "name": "NHK WORLD RADIO",
+    "category": "News",
+    "url": "https://b-nhkworld-radio.nhkworld.jp/hls/live/nhkworld-radio-rs1/index_rs1.m3u8",
+    "desc": "日本の公共放送NHKが届ける国際向けニュース。日本と世界をつなぐ信頼の報道",
+    "timezone": "Asia/Tokyo",
+    "volume": 0.8
+  },
+  {
+    "name": "AFN GO",
+    "category": "News",
+    "website": "https://afngo.net/",
+    "desc": "米軍関係者・軍属・その家族向けに、ニュース・エンターテインメント・地域情報を英語で届ける米軍放送局。",
+    "volume": 0.8
+  },
+  {
+    "name": "FM世田谷",
+    "category": "Local Radio of Japan",
+    "url": "https://fmsetagaya834.out.airtime.pro/fmsetagaya834_a",
+    "desc": "東京・世田谷発のコミュニティFM。地域の暮らし・文化・防災情報をきめ細かく発信",
+    "volume": 0.8
+  },
+  {
+    "name": "ラヂオもりおか",
+    "category": "Local Radio of Japan",
+    "url": "https://mtist.as.smartstream.ne.jp/30017/livestream/playlist.m3u8",
+    "volume": 0.8
+  },
+  {
+    "name": "湘南ビーチ",
+    "category": "Local Radio of Japan",
+    "url": "http://shonanbeachfm.out.airtime.pro:8000/shonanbeachfm_a",
+    "desc": "神奈川・逗子葉山の海辺から、洋楽・ジャズを中心に「耳にやさしい」音楽とトークを届けるおしゃれな湘南発コミュニティラジオ",
+    "volume": 0.8
+  },
+  {
+    "name": "NFRS",
+    "category": "Local Radio of Japan",
+    "url": "https://securestreams.autopo.st:2592/stream?t=1769818665235",
+    "desc": "大阪・西成区発の24時間インターネットラジオ局。「音のエンターテイメント」を世界へ届ける。",
+    "volume": 0.8
+  },
+  {
+    "name": "Soma FM Groove Salad",
+    "category": "Ambient/Vaporwave",
+    "url": "https://ice6.somafm.com/groovesalad-256-mp3",
+    "desc": "Slow ambient grooves — 作業BGMに最適",
+    "volume": 0.8
+  },
+  {
+    "name": "Drone Zone",
+    "category": "Ambient/Vaporwave",
+    "url": "http://ice4.somafm.com/dronezone-128-mp3",
+    "desc": "ビートを極限まで抑えたアンビエント。深いリラックスや瞑想に",
+    "volume": 0.8
+  },
+  {
+    "name": "Synphaera",
+    "category": "Ambient/Vaporwave",
+    "url": "http://ice1.somafm.com/synphaera-128-aac",
+    "volume": 0.8
+  },
+  {
+    "name": "Vaporwave",
+    "category": "Ambient/Vaporwave",
+    "url": "http://radio.plaza.one/ogg",
+    "desc": "24時間利用可能なオンラインVaporwave・Future funkラジオへようこそ。",
+    "volume": 0.8
+  },
+  {
+    "name": "Radio Swiss Jazz",
+    "category": "Jazz",
+    "url": "http://stream.srg-ssr.ch/m/rsj/mp3_128",
+    "desc": "スイス公共放送のジャズ専門チャンネル",
+    "volume": 0.8
+  },
+  {
+    "name": "181.fm Classic Rock",
+    "category": "Classic Rock",
+    "url": "https://listen.181fm.com/181-classical_128k.mp3",
+    "desc": "クラシックロック定番局",
+    "volume": 0.8
+  },
+  {
+    "name": "lofi.cafe",
+    "category": "Lo-fi",
+    "url": "https://lofi.stream.laut.fm/lofi",
+    "desc": "Lo-fi hip hop — study & chill",
+    "volume": 0.8
+  },
+  {
+    "name": "FIP",
+    "category": "Eclectic",
+    "url": "https://icecast.radiofrance.fr/fip-midfi.mp3",
+    "desc": "フランス公共放送のエクレクティック局",
+    "volume": 0.8
+  },
+  {
+    "name": "Japan City Pop",
+    "category": "Pop",
+    "url": "https://play.streamafrica.net/japancitypop",
+    "desc": "日本のシティポップ",
+    "volume": 0.8
+  },
+  {
+    "name": "80s 90s Super Pop Hits",
+    "category": "Pop",
+    "url": "https://s4.myradiostream.com:7344/listen.mp3?",
+    "desc": "",
+    "volume": 0.8
+  },
+  {
+    "name": "J1 HITS",
+    "category": "Music",
+    "url": "https://jenny.torontocast.com:2000/stream/J1HITS?_=184325",
+    "desc": "Hottest Hits",
+    "volume": 0.8
+  }
+]

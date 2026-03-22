@@ -32,8 +32,7 @@
         --player-h: 80px;
       }
 
-      html,
-      body {
+      html, body {
         height: 100%;
         background: var(--bg);
         color: var(--text);
@@ -84,6 +83,16 @@
       @keyframes pulse {
         0%, 100% { opacity: 1; }
         50% { opacity: 0.4; }
+      }
+
+      #jst-clock {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 1.0rem;
+        letter-spacing: 0.08em;
+        color: #ffffff;
+      }
+      #jst-clock .sec {
+        opacity: 0.4;
       }
 
       .filters {
@@ -358,7 +367,6 @@
         main { padding: 16px 20px calc(var(--player-h) + 16px); gap: 10px; }
         #player-bar { padding: 0 16px; gap: 12px; }
         .vol-wrap { display: none; }
-        #vol-slider { display: none; }
       }
     </style>
   </head>
@@ -366,6 +374,8 @@
     <header>
       <h1>MyRadio</h1>
       <span class="dot" id="live-dot"></span>
+      <div style="flex:1"></div>
+      <div id="jst-clock"></div>
     </header>
 
     <div class="filters" id="filters"></div>
@@ -381,7 +391,8 @@
         <svg viewBox="0 0 24 24">
           <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0 0 14 7.97v8.05c1.48-.73 2.5-2.25 2.5-4.02z" />
         </svg>
-        <input type="range" id="vol-slider" min="0" max="1" step="0.02" value="0.8" />
+        <input type="range" id="vol-slider" min="0" max="4" step="0.05" value="1.0" />
+        <span id="vol-label" style="font-family:'IBM Plex Mono',monospace;font-size:0.65rem;color:var(--muted);min-width:2.8em">1.00</span>
       </div>
       <button class="ctrl-btn" id="stop-btn" title="Stop">
         <svg viewBox="0 0 24 24">
@@ -393,23 +404,71 @@
     <audio id="audio" preload="none"></audio>
 
     <script>
-      const audio = document.getElementById('audio');
-      const grid = document.getElementById('grid');
-      const filters = document.getElementById('filters');
-      const bar = document.getElementById('player-bar');
-      const pName = document.getElementById('player-name');
-      const pTag = document.getElementById('player-tag');
-      const liveDot = document.getElementById('live-dot');
+      const audio     = document.getElementById('audio');
+      const grid      = document.getElementById('grid');
+      const filters   = document.getElementById('filters');
+      const bar       = document.getElementById('player-bar');
+      const pName     = document.getElementById('player-name');
+      const pTag      = document.getElementById('player-tag');
+      const liveDot   = document.getElementById('live-dot');
       const volSlider = document.getElementById('vol-slider');
-      const stopBtn = document.getElementById('stop-btn');
+      const volLabel  = document.getElementById('vol-label');
+      const stopBtn   = document.getElementById('stop-btn');
 
       let STATIONS = [];
       let current = null;
       let activeFilter = 'All';
 
-      audio.volume = parseFloat(volSlider.value);
-      volSlider.addEventListener('input', () => (audio.volume = parseFloat(volSlider.value)));
+      // ── WEB AUDIO API (GainNode) ──
+      // AudioContextとGainNodeを使い、volume値が1.0を超えた増幅に対応する
+      let audioCtx = null;
+      let gainNode = null;
+      let sourceNode = null;
 
+      function initAudioContext() {
+        if (audioCtx) return;
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        gainNode = audioCtx.createGain();
+        gainNode.connect(audioCtx.destination);
+        sourceNode = audioCtx.createMediaElementSource(audio);
+        sourceNode.connect(gainNode);
+      }
+
+      function setGain(value) {
+        // 0〜1.0 はそのまま、1.0超はGainNodeで増幅
+        if (value <= 1.0) {
+          audio.volume = value;
+          if (gainNode) gainNode.gain.value = 1.0;
+        } else {
+          audio.volume = 1.0;
+          if (gainNode) gainNode.gain.value = value;
+        }
+      }
+
+      // スライダー操作
+      volSlider.addEventListener('input', () => {
+        const v = parseFloat(volSlider.value);
+        volLabel.textContent = v.toFixed(2);
+        if (audioCtx) setGain(v);
+      });
+
+      // ── JST CLOCK ──
+      function updateJST() {
+        const now = new Date();
+        const hm = new Intl.DateTimeFormat('ja-JP', {
+          timeZone: 'Asia/Tokyo',
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: false,
+        }).format(now);
+        const ss = String(now.getSeconds()).padStart(2, '0');
+        document.getElementById('jst-clock').innerHTML =
+          `${hm}<span class="sec">:${ss}</span>`;
+      }
+      updateJST();
+      setInterval(updateJST, 1000);
+
+      // ── LOCAL TIME (カード用) ──
       function getLocalTime(timezone) {
         try {
           return new Intl.DateTimeFormat('ja-JP', {
@@ -522,8 +581,19 @@
           stop();
           return;
         }
+
+        // AudioContextはユーザー操作後に初期化（ブラウザ制約）
+        initAudioContext();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+
         current = station;
         audio.src = station.url;
+
+        const v = station.volume ?? 1.0;
+        volSlider.value = v;
+        volLabel.textContent = v.toFixed(2);
+        setGain(v);
+
         audio.play().catch(() => {});
         pName.textContent = station.name;
         pTag.textContent = station.category;
