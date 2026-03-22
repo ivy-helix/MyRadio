@@ -41,7 +41,6 @@
         font-weight: 300;
       }
 
-      /* ── NOISE OVERLAY ── */
       body::before {
         content: '';
         position: fixed;
@@ -51,7 +50,6 @@
         pointer-events: none;
       }
 
-      /* ── HEADER ── */
       header {
         position: sticky;
         top: 0;
@@ -84,16 +82,10 @@
         animation: pulse 1.4s ease-in-out infinite;
       }
       @keyframes pulse {
-        0%,
-        100% {
-          opacity: 1;
-        }
-        50% {
-          opacity: 0.4;
-        }
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.4; }
       }
 
-      /* ── FILTER TABS ── */
       .filters {
         padding: 16px 32px 0;
         display: flex;
@@ -124,7 +116,6 @@
         font-weight: 500;
       }
 
-      /* ── GRID ── */
       main {
         padding: 24px 32px calc(var(--player-h) + 24px);
         display: grid;
@@ -134,7 +125,6 @@
         z-index: 1;
       }
 
-      /* ── STATION CARD ── */
       .card {
         background: var(--surface);
         border: 1px solid var(--border);
@@ -153,11 +143,7 @@
         content: '';
         position: absolute;
         inset: 0;
-        background: radial-gradient(
-          circle at 70% 30%,
-          var(--amber) 0%,
-          transparent 65%
-        );
+        background: radial-gradient(circle at 70% 30%, var(--amber) 0%, transparent 65%);
         opacity: 0;
         transition: opacity 0.3s;
       }
@@ -166,34 +152,17 @@
         border-color: var(--amber-dim);
         box-shadow: 0 8px 24px #0009;
       }
-      .card:hover::after {
-        opacity: 0.04;
-      }
+      .card:hover::after { opacity: 0.04; }
       .card.playing {
         border-color: var(--amber);
         box-shadow: 0 0 0 1px var(--amber-dim), 0 8px 32px #e8a83822;
       }
-      .card.playing::after {
-        opacity: 0.07;
-      }
-      .card.external .card-name {
-        color: var(--blue);
-      }
-      .card.external .play-icon {
-        border-color: var(--blue-dim);
-      }
-      .card.external:hover .play-icon {
-        border-color: var(--blue);
-      }
-      .card.external .play-icon svg {
-        fill: var(--blue);
-      }
-      .card.external:hover {
-        border-color: var(--blue-dim);
-      }
-      .card.external.hover::after {
-        opacity: 0.04;
-      }
+      .card.playing::after { opacity: 0.07; }
+      .card.external .card-name { color: var(--blue); }
+      .card.external .play-icon { border-color: var(--blue-dim); }
+      .card.external:hover .play-icon { border-color: var(--blue); }
+      .card.external .play-icon svg { fill: var(--blue); }
+      .card.external:hover { border-color: var(--blue-dim); }
 
       .card-top {
         display: flex;
@@ -206,9 +175,7 @@
         line-height: 1.2;
         color: var(--text);
       }
-      .card.playing .card-name {
-        color: var(--amber);
-      }
+      .card.playing .card-name { color: var(--amber); }
 
       .play-icon {
         width: 32px;
@@ -221,24 +188,11 @@
         flex-shrink: 0;
         transition: background 0.2s, border-color 0.2s;
       }
-      .card:hover .play-icon {
-        border-color: var(--amber);
-      }
-      .card.playing .play-icon {
-        background: var(--amber);
-        border-color: var(--amber);
-      }
-      .play-icon svg {
-        width: 12px;
-        height: 12px;
-        fill: var(--muted);
-      }
-      .card:hover .play-icon svg {
-        fill: var(--amber);
-      }
-      .card.playing .play-icon svg {
-        fill: #0d0d0f;
-      }
+      .card:hover .play-icon { border-color: var(--amber); }
+      .card.playing .play-icon { background: var(--amber); border-color: var(--amber); }
+      .play-icon svg { width: 12px; height: 12px; fill: var(--muted); }
+      .card:hover .play-icon svg { fill: var(--amber); }
+      .card.playing .play-icon svg { fill: #0d0d0f; }
 
       .card-tag {
         font-family: 'IBM Plex Mono', monospace;
@@ -253,7 +207,23 @@
         line-height: 1.5;
       }
 
-      /* EQ bars (animated when playing) */
+      .card-time {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.7rem;
+        letter-spacing: 0.06em;
+        color: var(--muted);
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        border-top: 1px solid var(--border);
+        padding-top: 8px;
+        margin-top: 2px;
+      }
+      .card-time .time-clock {
+        color: var(--text);
+        font-weight: 500;
+      }
+
       .eq {
         display: flex;
         align-items: flex-end;
@@ -262,9 +232,7 @@
         opacity: 0;
         transition: opacity 0.3s;
       }
-      .card.playing .eq {
-        opacity: 1;
-      }
+      .card.playing .eq { opacity: 1; }
       .eq span {
         display: block;
         width: 3px;
@@ -272,36 +240,16 @@
         border-radius: 1px;
         animation: eq 0.8s ease-in-out infinite alternate;
       }
-      .eq span:nth-child(1) {
-        animation-duration: 0.6s;
-        animation-delay: 0s;
-      }
-      .eq span:nth-child(2) {
-        animation-duration: 0.8s;
-        animation-delay: 0.15s;
-      }
-      .eq span:nth-child(3) {
-        animation-duration: 0.5s;
-        animation-delay: 0.05s;
-      }
-      .eq span:nth-child(4) {
-        animation-duration: 0.9s;
-        animation-delay: 0.2s;
-      }
-      .eq span:nth-child(5) {
-        animation-duration: 0.7s;
-        animation-delay: 0.1s;
-      }
+      .eq span:nth-child(1) { animation-duration: 0.6s; animation-delay: 0s; }
+      .eq span:nth-child(2) { animation-duration: 0.8s; animation-delay: 0.15s; }
+      .eq span:nth-child(3) { animation-duration: 0.5s; animation-delay: 0.05s; }
+      .eq span:nth-child(4) { animation-duration: 0.9s; animation-delay: 0.2s; }
+      .eq span:nth-child(5) { animation-duration: 0.7s; animation-delay: 0.1s; }
       @keyframes eq {
-        from {
-          height: 3px;
-        }
-        to {
-          height: 14px;
-        }
+        from { height: 3px; }
+        to { height: 14px; }
       }
 
-      /* ── BOTTOM PLAYER ── */
       #player-bar {
         position: fixed;
         bottom: 0;
@@ -320,9 +268,7 @@
         transform: translateY(100%);
         transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
       }
-      #player-bar.visible {
-        transform: translateY(0);
-      }
+      #player-bar.visible { transform: translateY(0); }
 
       #player-name {
         font-family: 'DM Serif Display', serif;
@@ -355,34 +301,17 @@
         transition: background 0.2s, border-color 0.2s;
         flex-shrink: 0;
       }
-      .ctrl-btn:hover {
-        border-color: var(--amber);
-      }
-      .ctrl-btn svg {
-        width: 16px;
-        height: 16px;
-        fill: var(--text);
-      }
-      #stop-btn {
-        background: var(--amber);
-        border-color: var(--amber);
-      }
-      #stop-btn svg {
-        fill: #0d0d0f;
-      }
+      .ctrl-btn:hover { border-color: var(--amber); }
+      .ctrl-btn svg { width: 16px; height: 16px; fill: var(--text); }
+      #stop-btn { background: var(--amber); border-color: var(--amber); }
+      #stop-btn svg { fill: #0d0d0f; }
 
-      /* volume */
       .vol-wrap {
         display: flex;
         align-items: center;
         gap: 8px;
       }
-      .vol-wrap svg {
-        width: 14px;
-        height: 14px;
-        fill: var(--muted);
-        flex-shrink: 0;
-      }
+      .vol-wrap svg { width: 14px; height: 14px; fill: var(--muted); flex-shrink: 0; }
       #vol-slider {
         -webkit-appearance: none;
         width: 80px;
@@ -400,7 +329,6 @@
         background: var(--amber);
       }
 
-      /* ── CATEGORY SECTION HEADINGS ── */
       .section-label {
         grid-column: 1 / -1;
         font-family: 'IBM Plex Mono', monospace;
@@ -412,12 +340,8 @@
         border-top: 1px solid var(--border);
         margin-top: 4px;
       }
-      .section-label:first-child {
-        border-top: none;
-        margin-top: 0;
-      }
+      .section-label:first-child { border-top: none; margin-top: 0; }
 
-      /* ── EMPTY STATE ── */
       .empty {
         grid-column: 1 / -1;
         text-align: center;
@@ -429,26 +353,12 @@
       }
 
       @media (max-width: 600px) {
-        header {
-          padding: 16px 20px 14px;
-        }
-        .filters {
-          padding: 12px 20px 0;
-        }
-        main {
-          padding: 16px 20px calc(var(--player-h) + 16px);
-          gap: 10px;
-        }
-        #player-bar {
-          padding: 0 16px;
-          gap: 12px;
-        }
-        .vol-wrap {
-          display: none;
-        }
-        #vol-slider {
-          display: none;
-        }
+        header { padding: 16px 20px 14px; }
+        .filters { padding: 12px 20px 0; }
+        main { padding: 16px 20px calc(var(--player-h) + 16px); gap: 10px; }
+        #player-bar { padding: 0 16px; gap: 12px; }
+        .vol-wrap { display: none; }
+        #vol-slider { display: none; }
       }
     </style>
   </head>
@@ -469,18 +379,9 @@
       <div style="flex: 1"></div>
       <div class="vol-wrap">
         <svg viewBox="0 0 24 24">
-          <path
-            d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0 0 14 7.97v8.05c1.48-.73 2.5-2.25 2.5-4.02z"
-          />
+          <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0 0 14 7.97v8.05c1.48-.73 2.5-2.25 2.5-4.02z" />
         </svg>
-        <input
-          type="range"
-          id="vol-slider"
-          min="0"
-          max="1"
-          step="0.02"
-          value="0.8"
-        />
+        <input type="range" id="vol-slider" min="0" max="1" step="0.02" value="0.8" />
       </div>
       <button class="ctrl-btn" id="stop-btn" title="Stop">
         <svg viewBox="0 0 24 24">
@@ -492,79 +393,6 @@
     <audio id="audio" preload="none"></audio>
 
     <script>
-      // ============================================================
-      //  ★ STATIONS CONFIG — ここを編集してラジオを管理 ★
-      //  各ステーションのフィールド:
-      //    name     : 表示名
-      //    url      : ストリームURL (mp3 / aac / m3u8)
-      //    category : カテゴリー名（自由に決めてOK）
-      //    desc     : 短い説明文（省略可）
-      //    website  : 公式サイトURL（直接再生不可の局に使用。ブルーボタンで別タブ表示）
-      // ============================================================
-      const STATIONS = [
-        {
-          name: 'BBC World Service',
-          url: 'https://stream.live.vc.bbcmedia.co.uk/bbc_world_service',
-          category: 'News',
-          desc: 'BBC英語国際放送',
-        },
-        {
-          name: 'NPR News',
-          url: 'https://npr-ice.streamguys1.com/live.mp3',
-          category: 'News',
-          desc: '米国公共ラジオ。時事・文化・科学を深掘りする良質なニュース',
-        },
-        {
-          name: 'Radio Swiss Jazz',
-          url: 'http://stream.srg-ssr.ch/m/rsj/mp3_128',
-          category: 'Jazz',
-          desc: 'スイス公共放送のジャズ専門チャンネル',
-        },
-        {
-          name: 'Soma FM Groove Salad',
-          url: 'https://ice6.somafm.com/groovesalad-256-mp3',
-          category: 'Ambient',
-          desc: 'Slow ambient grooves — 作業BGMに最適',
-        },
-        {
-          name: 'Soma FM Space Station',
-          url: 'https://ice6.somafm.com/spacestation-128-mp3',
-          category: 'Ambient',
-          desc: 'Deep space ambient electronics',
-        },
-        {
-          name: '181.fm Classic Rock',
-          url: 'https://listen.181fm.com/181-classical_128k.mp3',
-          category: 'Classic Rock',
-          desc: 'クラシックロック定番局',
-        },
-        {
-          name: 'lofi.cafe',
-          url: 'https://lofi.stream.laut.fm/lofi',
-          category: 'Lo-fi',
-          desc: 'Lo-fi hip hop — study & chill',
-        },
-        {
-          name: 'FIP',
-          url: 'https://icecast.radiofrance.fr/fip-midfi.mp3',
-          category: 'Eclectic',
-          desc: 'フランス公共放送のエクレクティック局',
-        },
-        {
-          name: 'NHK らじるらじる',
-          website: 'https://www.nhk.or.jp/radio/',
-          category: 'News',
-          desc: 'NHK公式ラジオ配信サービス',
-        },
-        {
-          name: 'DZRH News',
-          website: 'https://dzrh.com.ph',
-          category: 'News',
-          desc: 'マニラ666AM。フィリピン老舗ニュース局',
-        },
-      ];
-      // ============================================================
-
       const audio = document.getElementById('audio');
       const grid = document.getElementById('grid');
       const filters = document.getElementById('filters');
@@ -575,24 +403,37 @@
       const volSlider = document.getElementById('vol-slider');
       const stopBtn = document.getElementById('stop-btn');
 
+      let STATIONS = [];
       let current = null;
       let activeFilter = 'All';
 
       audio.volume = parseFloat(volSlider.value);
-      volSlider.addEventListener(
-        'input',
-        () => (audio.volume = parseFloat(volSlider.value))
-      );
+      volSlider.addEventListener('input', () => (audio.volume = parseFloat(volSlider.value)));
 
-      // gather categories
-      const cats = ['All', ...new Set(STATIONS.map((s) => s.category))];
+      function getLocalTime(timezone) {
+        try {
+          return new Intl.DateTimeFormat('ja-JP', {
+            timeZone: timezone,
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false,
+          }).format(new Date());
+        } catch { return '--:--'; }
+      }
+
+      function updateClocks() {
+        document.querySelectorAll('[data-timezone]').forEach((el) => {
+          el.textContent = getLocalTime(el.dataset.timezone);
+        });
+      }
+      setInterval(updateClocks, 30000);
 
       function buildFilters() {
+        const cats = ['All', ...new Set(STATIONS.map((s) => s.category))];
         filters.innerHTML = '';
         cats.forEach((cat) => {
           const btn = document.createElement('button');
-          btn.className =
-            'filter-btn' + (cat === activeFilter ? ' active' : '');
+          btn.className = 'filter-btn' + (cat === activeFilter ? ' active' : '');
           btn.textContent = cat;
           btn.onclick = () => {
             activeFilter = cat;
@@ -611,12 +452,10 @@
             : STATIONS.filter((s) => s.category === activeFilter);
 
         if (!visible.length) {
-          grid.innerHTML =
-            '<div class="empty">no stations in this category</div>';
+          grid.innerHTML = '<div class="empty">no stations in this category</div>';
           return;
         }
 
-        // Group by category
         const groups = {};
         visible.forEach((s) => {
           if (!groups[s.category]) groups[s.category] = [];
@@ -646,19 +485,30 @@
           : current === station
           ? 'M6 19h4V5H6v14zm8-14v14h4V5h-4z'
           : 'M8 5v14l11-7z';
+
+        const timeHtml = station.timezone ? `
+          <div class="card-time">
+            <svg viewBox="0 0 24 24" width="11" height="11" fill="currentColor" style="opacity:.5;flex-shrink:0">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/>
+            </svg>
+            <span class="time-clock" data-timezone="${station.timezone}">${getLocalTime(station.timezone)}</span>
+            <span style="opacity:.45">${station.timezone.split('/')[1]?.replace('_', ' ') ?? station.timezone}</span>
+          </div>` : '';
+
         card.innerHTML = `
-    <div class="card-top">
-      <div class="card-name">${station.name}</div>
-      <div class="play-icon">
-        <svg viewBox="0 0 24 24"><path d="${iconPath}"/></svg>
-      </div>
-    </div>
-    <div class="card-tag">${station.category}</div>
-    ${station.desc ? `<div class="card-desc">${station.desc}</div>` : ''}
-    <div class="eq">
-      <span></span><span></span><span></span><span></span><span></span>
-    </div>
-  `;
+          <div class="card-top">
+            <div class="card-name">${station.name}</div>
+            <div class="play-icon">
+              <svg viewBox="0 0 24 24"><path d="${iconPath}"/></svg>
+            </div>
+          </div>
+          <div class="card-tag">${station.category}</div>
+          ${station.desc ? `<div class="card-desc">${station.desc}</div>` : ''}
+          ${timeHtml}
+          <div class="eq">
+            <span></span><span></span><span></span><span></span><span></span>
+          </div>
+        `;
         card.addEventListener('click', () => play(station));
         return card;
       }
@@ -675,7 +525,6 @@
         current = station;
         audio.src = station.url;
         audio.play().catch(() => {});
-
         pName.textContent = station.name;
         pTag.textContent = station.category;
         bar.classList.add('visible');
@@ -694,8 +543,22 @@
 
       stopBtn.addEventListener('click', stop);
 
-      buildFilters();
-      buildGrid();
+      // stations.json を読み込んで起動
+      fetch('./stations.json')
+        .then(r => {
+          if (!r.ok) throw new Error(`HTTP ${r.status}`);
+          return r.json();
+        })
+        .then(data => {
+          STATIONS = data;
+          buildFilters();
+          buildGrid();
+        })
+        .catch(err => {
+          console.error('stations.json の読み込み失敗:', err);
+          document.getElementById('grid').innerHTML =
+            '<div class="empty">stations.json の読み込みに失敗しました: ' + err.message + '</div>';
+        });
     </script>
   </body>
 </html>
