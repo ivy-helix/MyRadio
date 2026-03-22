@@ -12,6 +12,7 @@
     <style>
       *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+      /* ── DARK MODE (default) ── */
       :root {
         --bg: #0d0d0f;
         --surface: #16161a;
@@ -23,6 +24,21 @@
         --blue: #4a9eff;
         --blue-dim: #1e4a80;
         --player-h: 80px;
+        --header-clock-color: #ffffff;
+      }
+
+      /* ── LIGHT MODE ── */
+      :root.light {
+        --bg: #f5f0e8;
+        --surface: #ede8e0;
+        --border: #d4cfc6;
+        --amber: #c8861a;
+        --amber-dim: #a06010;
+        --text: #1a1814;
+        --muted: #7a7470;
+        --blue: #1a6ecc;
+        --blue-dim: #0a3d80;
+        --header-clock-color: #1a1814;
       }
 
       html, body {
@@ -31,35 +47,45 @@
         color: var(--text);
         font-family: 'DM Sans', sans-serif;
         font-weight: 300;
+        transition: background 0.3s, color 0.3s;
       }
 
       body::before {
         content: '';
-        position: fixed;
-        inset: 0;
-        z-index: 0;
+        position: fixed; inset: 0; z-index: 0;
         background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
         pointer-events: none;
       }
 
+      /* ── HEADER ── */
       header {
         position: sticky; top: 0; z-index: 10;
         background: var(--bg);
         border-bottom: 1px solid var(--border);
         padding: 20px 32px 16px;
-        display: flex; align-items: baseline; gap: 20px;
+        display: flex; align-items: center; gap: 20px;
+        transition: padding 0.3s, background 0.3s, border-color 0.3s;
+        top: 0;
+        position: sticky;
       }
+      header.compact { padding: 10px 32px; }
+
       header h1 {
         font-family: 'DM Serif Display', serif;
         font-size: clamp(1.6rem, 4vw, 2.4rem);
         letter-spacing: -0.02em;
         color: var(--amber);
+        transition: font-size 0.3s;
       }
+      header.compact h1 { font-size: 1.3rem; }
+
       header .dot {
         width: 8px; height: 8px; border-radius: 50%;
-        background: var(--muted); display: inline-block; margin-bottom: 2px;
-        transition: background 0.3s, box-shadow 0.3s;
+        background: var(--muted); display: inline-block;
+        transition: background 0.3s, box-shadow 0.3s, width 0.3s, height 0.3s;
+        flex-shrink: 0;
       }
+      header.compact .dot { width: 6px; height: 6px; }
       header .dot.live {
         background: #e84040;
         box-shadow: 0 0 8px #e84040aa;
@@ -67,32 +93,57 @@
       }
       @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
 
+      /* ── HEADER RIGHT ── */
+      .header-right {
+        margin-left: auto;
+        display: flex; align-items: center; gap: 14px;
+      }
+
       #jst-clock {
         font-family: 'IBM Plex Mono', monospace;
-        font-size: 1.0rem; letter-spacing: 0.08em; color: #ffffff;
+        font-size: 1.0rem; letter-spacing: 0.08em;
+        color: var(--header-clock-color);
+        transition: font-size 0.3s, color 0.3s;
       }
+      header.compact #jst-clock { font-size: 0.8rem; }
       #jst-clock .sec { opacity: 0.4; }
 
+      /* ── THEME TOGGLE ── */
+      #theme-btn {
+        background: none; border: none; cursor: pointer;
+        width: 28px; height: 28px;
+        display: flex; align-items: center; justify-content: center;
+        color: var(--muted);
+        transition: color 0.2s;
+        padding: 0; flex-shrink: 0;
+      }
+      #theme-btn:hover { color: var(--amber); }
+      #theme-btn svg { width: 18px; height: 18px; }
+
+      /* ── FILTERS ── */
       .filters { padding: 16px 32px 0; display: flex; gap: 8px; flex-wrap: wrap; }
       .filter-btn {
         font-family: 'IBM Plex Mono', monospace;
         font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase;
-        padding: 5px 14px; border-radius: 20px; border: 1px solid var(--border);
-        background: transparent; color: var(--muted); cursor: pointer; transition: all 0.2s;
+        padding: 5px 14px; border-radius: 20px;
+        border: 1px solid var(--border); background: transparent; color: var(--muted);
+        cursor: pointer; transition: all 0.2s;
       }
       .filter-btn:hover { color: var(--text); border-color: var(--muted); }
-      .filter-btn.active { background: var(--amber); color: #0d0d0f; border-color: var(--amber); font-weight: 500; }
+      .filter-btn.active { background: var(--amber); color: var(--bg); border-color: var(--amber); font-weight: 500; }
 
+      /* ── GRID ── */
       main {
         padding: 24px 32px calc(var(--player-h) + 24px);
         display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
         gap: 12px; position: relative; z-index: 1;
       }
 
+      /* ── CARD ── */
       .card {
         background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
         padding: 20px; cursor: pointer;
-        transition: border-color 0.2s, transform 0.15s, box-shadow 0.2s;
+        transition: border-color 0.2s, transform 0.15s, box-shadow 0.2s, background 0.3s;
         display: flex; flex-direction: column; gap: 10px;
         user-select: none; position: relative; overflow: hidden;
       }
@@ -101,7 +152,7 @@
         background: radial-gradient(circle at 70% 30%, var(--amber) 0%, transparent 65%);
         opacity: 0; transition: opacity 0.3s;
       }
-      .card:hover { transform: translateY(-2px); border-color: var(--amber-dim); box-shadow: 0 8px 24px #0009; }
+      .card:hover { transform: translateY(-2px); border-color: var(--amber-dim); box-shadow: 0 8px 24px #0004; }
       .card:hover::after { opacity: 0.04; }
       .card.playing { border-color: var(--amber); box-shadow: 0 0 0 1px var(--amber-dim), 0 8px 32px #e8a83822; }
       .card.playing::after { opacity: 0.07; }
@@ -124,7 +175,7 @@
       .card.playing .play-icon { background: var(--amber); border-color: var(--amber); }
       .play-icon svg { width: 12px; height: 12px; fill: var(--muted); }
       .card:hover .play-icon svg { fill: var(--amber); }
-      .card.playing .play-icon svg { fill: #0d0d0f; }
+      .card.playing .play-icon svg { fill: var(--bg); }
 
       .card-tag { font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
       .card-desc { font-size: 0.82rem; color: var(--muted); line-height: 1.5; }
@@ -146,13 +197,15 @@
       .eq span:nth-child(5) { animation-duration: 0.7s; animation-delay: 0.1s; }
       @keyframes eq { from{height:3px} to{height:14px} }
 
+      /* ── PLAYER BAR ── */
       #player-bar {
         position: fixed; bottom: 0; left: 0; right: 0; z-index: 20;
-        height: var(--player-h); background: #111115ee;
+        height: var(--player-h);
+        background: var(--bg);
         backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
         border-top: 1px solid var(--border);
         display: flex; align-items: center; padding: 0 24px; gap: 20px;
-        transform: translateY(100%); transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
+        transform: translateY(100%); transition: transform 0.35s cubic-bezier(0.4,0,0.2,1), background 0.3s, border-color 0.3s;
       }
       #player-bar.visible { transform: translateY(0); }
 
@@ -171,7 +224,7 @@
       .ctrl-btn:hover { border-color: var(--amber); }
       .ctrl-btn svg { width: 16px; height: 16px; fill: var(--text); }
       #stop-btn { background: var(--amber); border-color: var(--amber); }
-      #stop-btn svg { fill: #0d0d0f; }
+      #stop-btn svg { fill: var(--bg); }
 
       .vol-wrap { display: flex; align-items: center; gap: 8px; }
       .vol-wrap svg { width: 14px; height: 14px; fill: var(--muted); flex-shrink: 0; }
@@ -197,6 +250,7 @@
 
       @media (max-width: 600px) {
         header { padding: 16px 20px 14px; }
+        header.compact { padding: 8px 20px; }
         .filters { padding: 12px 20px 0; }
         main { padding: 16px 20px calc(var(--player-h) + 16px); gap: 10px; }
         #player-bar { padding: 0 16px; gap: 12px; }
@@ -205,11 +259,30 @@
     </style>
   </head>
   <body>
-    <header>
+    <header id="site-header">
       <h1>MyRadio</h1>
       <span class="dot" id="live-dot"></span>
-      <div style="flex:1"></div>
-      <div id="jst-clock"></div>
+      <div class="header-right">
+        <button id="theme-btn" title="テーマ切替" aria-label="テーマ切替">
+          <!-- 月アイコン（ダークモード時に表示） -->
+          <svg id="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/>
+          </svg>
+          <!-- 太陽アイコン（ライトモード時に表示） -->
+          <svg id="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:none">
+            <circle cx="12" cy="12" r="5"/>
+            <line x1="12" y1="1" x2="12" y2="3"/>
+            <line x1="12" y1="21" x2="12" y2="23"/>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+            <line x1="1" y1="12" x2="3" y2="12"/>
+            <line x1="21" y1="12" x2="23" y2="12"/>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+          </svg>
+        </button>
+        <div id="jst-clock"></div>
+      </div>
     </header>
 
     <div class="filters" id="filters"></div>
@@ -222,9 +295,7 @@
       </div>
       <div style="flex:1"></div>
       <div class="vol-wrap">
-        <svg viewBox="0 0 24 24">
-          <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0 0 14 7.97v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/>
-        </svg>
+        <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0 0 14 7.97v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
         <input type="range" id="vol-slider" min="0" max="4" step="0.05" value="1.0" />
         <span id="vol-label" style="font-family:'IBM Plex Mono',monospace;font-size:0.65rem;color:var(--muted);min-width:2.8em">1.00</span>
       </div>
@@ -246,13 +317,40 @@
       const volSlider = document.getElementById('vol-slider');
       const volLabel  = document.getElementById('vol-label');
       const stopBtn   = document.getElementById('stop-btn');
+      const siteHeader= document.getElementById('site-header');
+      const themeBtn  = document.getElementById('theme-btn');
+      const iconMoon  = document.getElementById('icon-moon');
+      const iconSun   = document.getElementById('icon-sun');
 
       let STATIONS = [];
       let current = null;
       let activeFilter = 'All';
+      let isLight = false;
 
-      // ── WEB AUDIO API ──
-      // createMediaElementSource は1つのaudio要素につき1回だけ呼ぶ
+      // ── THEME TOGGLE ──
+      themeBtn.addEventListener('click', () => {
+        isLight = !isLight;
+        document.documentElement.classList.toggle('light', isLight);
+        iconMoon.style.display = isLight ? 'none' : 'block';
+        iconSun.style.display  = isLight ? 'block' : 'none';
+      });
+
+      // ── HEADER COMPACT ON SCROLL ──
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 40) {
+          siteHeader.classList.add('compact');
+          siteHeader.style.position = 'fixed';
+          siteHeader.style.width = '100%';
+          document.body.style.paddingTop = siteHeader.offsetHeight + 'px';
+        } else {
+          siteHeader.classList.remove('compact');
+          siteHeader.style.position = 'sticky';
+          siteHeader.style.width = '';
+          document.body.style.paddingTop = '';
+        }
+      }, { passive: true });
+
+      // ── WEB AUDIO API (GainNode) ──
       let audioCtx = null;
       let gainNode = null;
       let audioInitialized = false;
@@ -269,12 +367,10 @@
 
       function applyVolume(v) {
         if (!audioCtx) {
-          // GainNode未初期化の場合はaudio.volumeのみ（上限1.0）
           audio.volume = Math.min(v, 1.0);
           return;
         }
         if (audioCtx.state === 'suspended') audioCtx.resume();
-        // 1.0以下はaudio.volumeで、1.0超はGainNodeで増幅
         if (v <= 1.0) {
           audio.volume = v;
           gainNode.gain.value = 1.0;
@@ -284,7 +380,6 @@
         }
       }
 
-      // スライダー操作
       volSlider.addEventListener('input', () => {
         const v = parseFloat(volSlider.value);
         volLabel.textContent = v.toFixed(2);
@@ -319,6 +414,7 @@
       }
       setInterval(updateClocks, 30000);
 
+      // ── FILTERS ──
       function buildFilters() {
         const cats = ['All', ...new Set(STATIONS.map((s) => s.category))];
         filters.innerHTML = '';
@@ -331,6 +427,7 @@
         });
       }
 
+      // ── GRID ──
       function buildGrid() {
         grid.innerHTML = '';
         const visible = activeFilter === 'All'
@@ -359,6 +456,7 @@
         });
       }
 
+      // ── CARD ──
       function makeCard(station) {
         const isExternal = !!station.website;
         const card = document.createElement('div');
@@ -386,25 +484,20 @@
           <div class="card-tag">${station.category}</div>
           ${station.desc ? `<div class="card-desc">${station.desc}</div>` : ''}
           ${timeHtml}
-          <div class="eq">
-            <span></span><span></span><span></span><span></span><span></span>
-          </div>
+          <div class="eq"><span></span><span></span><span></span><span></span><span></span></div>
         `;
         card.addEventListener('click', () => play(station));
         return card;
       }
 
+      // ── PLAY ──
       function play(station) {
         if (station.website) {
           window.open(station.website, '_blank');
           return;
         }
-        if (current === station) {
-          stop();
-          return;
-        }
+        if (current === station) { stop(); return; }
 
-        // 初回再生時にAudioContextを初期化（ユーザー操作後でないと動かないブラウザ制約）
         initAudioContext();
 
         current = station;
@@ -423,6 +516,7 @@
         buildGrid();
       }
 
+      // ── STOP ──
       function stop() {
         audio.pause();
         audio.src = '';
@@ -434,16 +528,10 @@
 
       stopBtn.addEventListener('click', stop);
 
+      // ── LOAD STATIONS ──
       fetch('./stations.json')
-        .then(r => {
-          if (!r.ok) throw new Error(`HTTP ${r.status}`);
-          return r.json();
-        })
-        .then(data => {
-          STATIONS = data;
-          buildFilters();
-          buildGrid();
-        })
+        .then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
+        .then(data => { STATIONS = data; buildFilters(); buildGrid(); })
         .catch(err => {
           console.error('stations.json の読み込み失敗:', err);
           document.getElementById('grid').innerHTML =

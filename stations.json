@@ -5,7 +5,15 @@
     "url": "https://stream.live.vc.bbcmedia.co.uk/bbc_world_service",
     "desc": "英国発・世界最大級の国際放送。多言語で届ける信頼のグローバルニュース",
     "timezone": "Europe/London",
-    "volume": 2.7
+    "volume": 2
+  },
+  {
+    "name": "WABC",
+    "category": "News",
+    "url": "https://playerservices.streamtheworld.com/api/livestream-redirect/WABCAM.mp3",
+    "desc": "ニューヨーク発の保守系ト－クラジオ局「Talkradio 77」。政治・時事を中心に論客が集う。",
+    "timezone": "America/New_York",
+    "volume": 1.4
   },
   {
     "name": "NPR News",
@@ -14,6 +22,14 @@
     "desc": "米国公共ラジオ。時事・文化・科学を深掘りする良質なニュース",
     "timezone": "America/New_York",
     "volume": 2.7
+  },
+  {
+    "name": "Iowa Public Radio",
+    "category": "News",
+    "url": "http://studioone-stream.iowapublicradio.org/StudioOne.mp3",
+    "desc": "ニュース・クラシック・オルタナティブ音楽の3ネットワークを展開するアイオワ州の公共ラジオ局。",
+    "timezone": "America/Chicago",
+    "volume": 0.8
   },
   {
     "name": "Sky News Australia Radio",
@@ -122,6 +138,20 @@
     "url": "https://jenny.torontocast.com:2000/stream/J1HITS?_=184325",
     "desc": "日本のチャートヒットを中心に流すカナダ発のJ-POPチャンネル",
     "volume": 0.5
+  },
+  {
+    "name": "KEXP",
+    "category": "Indie",
+    "url": "https://kexp.streamguys1.com/kexp160.aac",
+    "desc": "シアトル発の非営利インディー音楽局。YouTubeのライブセッションでも世界的に有名",
+    "volume": 0.8
+  },
+  {
+    "name": "Radio Paradise Main Mix",
+    "category": "Indie",
+    "url": "http://stream-uk1.radioparadise.com/aac-320",
+    "desc": "人間がキュレーションするエクレクティックな音楽ミックスを、比類ない音質で届けるカリフォルニア発の広告なしインターネットラジオ",
+    "volume": 0.8
   },
   {
     "name": "Japan City Pop",
